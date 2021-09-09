@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+  <div id="agent-form">
+    <div v-if="!sended" class="popup-content__header">Форма запроса</div>
+    <div class="popup-content__content">
+      <div v-if="!sended" v-cloak>
+        <form @submit.prevent="submit" novalidate class="feedback-form">
+          <div class="form-group">
+            <label class="form-control__label required"
+                   :for="fields.name.id">Имя</label>
+            <div class="form-control__field">
+              <input class="form-control"
+                     :class="{'error': fields.name.error.triggered}" type="text"
+                     v-model="fields.name.value" :id="fields.name.id"
+                     @focus="clearError('name')"
+                     @blur="blurHandler('name')"
+                     maxlength="50"
+              >
+            </div>
+            <label class="error" :for="fields.name.id"
+                   v-if="fields.name.error.triggered">{{ fields.name.error.value
+              }}</label>
+          </div>
+
+          <div class="form-group">
+            <label class="form-control__label required" :for="fields.last_name.id">Фамилия</label>
+            <div class="form-control__field">
+              <input class="form-control"
+                     :class="{'error': fields.last_name.error.triggered}"
+                     type="text"
+                     v-model="fields.last_name.value" :id="fields.last_name.id"
+                     @focus="clearError('last_name')"
+                     @blur="blurHandler('last_name')"
+                     maxlength="50"
+              >
+            </div>
+            <label class="error" :for="fields.last_name.id"
+                   v-if="fields.last_name.error.triggered">{{ fields.last_name.error.value
+              }}</label>
+          </div>
+
+          <div class="form-group">
+            <label class="form-control__label required" :for="fields.agent.id">ФИО
+              агента Фонда</label>
+            <div class="form-control__field">
+              <input class="form-control"
+                     :disabled="true"
+                     :class="{'error': fields.agent.error.triggered}" type="text"
+                     v-model="fields.agent.value" :id="fields.agent.id"
+                     @focus="clearError('agent')"
+                     @blur="blurHandler('agent')"
+              >
+            </div>
+            <label class="error" :for="fields.agent.id"
+                   v-if="fields.agent.error.triggered">{{ fields.agent.error.value
+              }}</label>
+          </div>
+
+          <div class="form-group">
+            <label class="form-control__label required" :for="fields.birth_day.id">Дата
+              рождения</label>
+            <div class="form-control__field">
+              <input class="form-control"
+                     :class="{'error': fields.birth_day.error.triggered}"
+                     type="text"
+                     v-model="fields.birth_day.value" :id="fields.birth_day.id"
+                     v-mask="masks.date"
+                     placeholder="ДД.ММ.ГГГГ" @focus="clearError('birth_day')"
+                     @blur="blurHandler('birth_day')">
+            </div>
+            <label class="error" :for="fields.birth_day.id"
+                   v-if="fields.birth_day.error.triggered">{{ fields.birth_day.error.value
+              }}</label>
+          </div>
+
+          <div class="form-group">
+            <label class="form-control__label required"
+                   :for="fields.passport_info.id">Серия и номер паспорта</label>
+            <div class="form-control__field">
+              <input class="form-control"
+                     v-mask="masks.passport"
+                     :class="{'error': fields.passport_info.error.triggered}"
+                     type="text"
+                     v-model="fields.passport_info.value"
+                     :id="fields.passport_info.id"
+                     @focus="clearError('passport_info')"
+                     @blur="blurHandler('passport_info')">
+            </div>
+            <label class="error" :for="fields.passport_info.id"
+                   v-if="fields.passport_info.error.triggered">{{ fields.passport_info.error.value
+              }}</label>
+          </div>
+
+          <div class="form-group">
+            <label class="form-control__label required"
+                   :for="fields.passport_date.id">Дата выдачи паспорта</label>
+            <div class="form-control__field">
+              <input class="form-control"
+                     :class="{'error': fields.passport_date.error.triggered}"
+                     type="text"
+                     v-model="fields.passport_date.value"
+                     :id="fields.passport_date.id" v-mask="masks.date"
+                     placeholder="ДД.ММ.ГГГГ" @focus="clearError('passport_date')"
+                     @blur="blurHandler('passport_date')">
+            </div>
+            <label class="error" :for="fields.passport_date.id"
+                   v-if="fields.passport_date.error.triggered">{{ fields.passport_date.error.value
+              }}</label>
+          </div>
+
+          <div class="form-group">
+            <label class="form-control__label required"
+                   :for="fields.snils.id">СНИЛС</label>
+            <div class="form-control__field">
+              <input class="form-control"
+                     :class="{'error': fields.snils.error.triggered}" type="text"
+                     v-model="fields.snils.value" :id="fields.snils.id"
+                     @focus="clearError('snils')"
+                     @blur="blurHandler('snils')"
+                     :maxlength="fields.snils.validate.minLength"
+                     v-mask="masks.snils">
+            </div>
+            <label class="error" :for="fields.snils.id"
+                   v-if="fields.snils.error.triggered">{{ fields.snils.error.value
+              }}</label>
+          </div>
+
+          <div class="form-group">
+            <label class="form-control__label required" :for="fields.email.id">E-mail</label>
+            <div class="form-control__field">
+              <input class="form-control"
+                     :class="{'error': fields.email.error.triggered}" type="text"
+                     v-model="fields.email.value" :id="fields.email.id"
+                     @focus="clearError('email')"
+                     @blur="blurHandler('email')">
+            </div>
+            <label class="error" :for="fields.email.id"
+                   v-if="fields.email.error.triggered">{{ fields.email.error.value
+              }}</label>
+          </div>
+
+          <div class="form-group">
+            <label class="form-control__label required" :for="fields.phone.id">Контактный
+              номер телефона</label>
+            <div class="form-control__field">
+              <input class="form-control"
+                     :class="{'error': fields.phone.error.triggered}" type="text"
+                     v-model="fields.phone.value" :id="fields.phone.id"
+                     v-mask="masks.phone"
+                     placeholder="+7 (999) 999 99 99" @focus="clearError('phone')"
+                     @blur="blurHandler('phone')">
+            </div>
+            <label class="error" :for="fields.phone.id"
+                   v-if="fields.phone.error.triggered">{{ fields.phone.error.value
+              }}</label>
+          </div>
+
+          <div class="form-group form-group_message">
+            <label class="form-control__label required" :for="fields.reason.value">Цель
+              запроса</label>
+            <div class="form-control__field">
+                                                        <textarea class="form-control"
+                                                                  :class="{'error': fields.reason.error.triggered}"
+                                                                  v-model="fields.reason.value"
+                                                                  :id="fields.reason.value" @focus="clearError('reason')"
+                                                                  @blur="blurHandler('reason')"
+                                                                  maxlength="500"
+                                                        ></textarea>
+            </div>
+            <label class="error" :for="fields.reason.value"
+                   v-if="fields.reason.error.triggered">{{ fields.reason.error.value
+              }}</label>
+          </div>
+
+          <div class="form-group form-group_captcha">
+            <label class="form-control__label required"
+                   :for="fields.captcha_word.id">Введите код с картинки</label>
+            <div class="form-control__field">
+              <div class="img-captcha__wrap">
+                <img src="/bitrix/tools/captcha.php?captcha_sid=<?= $arResult['CAPTCHA'] ?>"
+                     width="180" height="48"
+                     data-form-captcha-img="true"/>
+              </div>
+              <input class="form-control"
+                     :class="{'error': fields.captcha_word.error.triggered}"
+                     type="text"
+                     :maxlength="fields.captcha_word.validate.minLength"
+                     v-model="fields.captcha_word.value"
+                     :id="fields.captcha_word.id"
+                     @focus="clearError('captcha_word')"
+                     @blur="blurHandler('captcha_word')">
+            </div>
+            <input type="hidden" ref="captcha_sid" name="captcha_sid"
+                   value="<?= $arResult['CAPTCHA'] ?>"/>
+            <label class="error" :for="fields.reason.id"
+                   v-if="fields.captcha_word.error.triggered">{{ fields.captcha_word.error.value
+              }}</label>
+          </div>
+
+          <div class="form-group">
+            <div class="checkbox">
+              <input class="checkbox__control" type="checkbox"
+                     :checked="fields.is_agree.value"
+                     v-model="fields.is_agree.value"
+              >
+              <label class="checkbox__label required" @click="setAgreeValue">
+                <span>Я согласен на&nbsp;обработку и&nbsp;передачу моих</span>
+                <span @click.prevent="" data-popup="personaldata"
+                      class="checkbox__agree-link">
+                                                                персональных данных
+                                                            </span>
+              </label>
+            </div>
+            <label class="error"
+                   v-if="fields.is_agree.error.triggered">{{ fields.is_agree.error.value
+              }}</label>
+          </div>
+
+          <div class="form-group_submit">
+            <button type="submit" name="send"
+                    class="btn btn-lg btn-dark-blue btn-loader"
+                    :class="{'is-loading': isLoading}" :disabled="!isFormValid">
+              <span class="btn-loader__text">Отправить</span>
+              <span class="btn-loader__wrap loader">
+                  <span class="loader__block loader__block_1"></span>
+                  <span class="loader__block loader__block_2"></span>
+                  <span class="loader__block loader__block_3"></span>
+                  <span class="loader__block loader__block_4"></span>
+                  <span class="loader__block loader__block_5"></span>
+              </span>
+            </button>
+          </div>
+
+        </form>
+
+        <div v-if="serverErrors.length">
+          <div class="common-error-text mt-2" v-for="error in serverErrors">
+            {{ error }}
+          </div>
+        </div>
+
+      </div>
+      <div v-else class="feedback__result-message">
+        <div>
+          <div class="iconitem iconitem_row">
+                                                    <span class="iconitem__icon">
+                                                        <span class="svg-icon ">
+                                                            <svg class="icon spr-check-star">
+                                                                <use xlink:href="#spr-check-star"></use>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+            <span class="iconitem__text">
+                                                        Спасибо! <br/>
+                                                        Ваше запрос успешно отправлен!
+                                                    </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
